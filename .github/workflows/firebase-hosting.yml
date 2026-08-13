@@ -1,0 +1,29 @@
+name: Deploy to Firebase Hosting
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/957770722839/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider'
+          service_account: 'github-action-1331703457@wifi-combo-module.iam.gserviceaccount.com'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install -g firebase-tools
+
+      - run: firebase deploy --only hosting --project wifi-combo-module
